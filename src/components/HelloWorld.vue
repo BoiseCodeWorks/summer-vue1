@@ -1,56 +1,89 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+  <div class="hello col-4">
+    <h1>Hello Vue</h1>
+    <h3>Choose Your Target!</h3>
+    <button
+      v-for="target in targets"
+      :key="target.name"
+      @click="activeTarget = target"
+    >{{target.name}}</button>
+    <div v-if="activeTarget.name">
+      <h4
+        :class="{
+        alive: activeTarget.health >= 50, 
+        bloodied: activeTarget.health < 50 && activeTarget.health>0, 
+        dead: activeTarget.health == 0}"
+      >{{ activeTarget.name }}</h4>
+      <p>{{ activeTarget.health }}</p>
+      <p v-if="activeTarget.health > 50">GET' EM!</p>
+      <p v-else-if="activeTarget.health > 0">He's Bloodied</p>
+      <p v-else>He Dead</p>
+      <button
+        v-for="(damage, attackName) in activeTarget.attacks"
+        :key="damage"
+        @click="attack(attackName)"
+      >{{attackName}}</button>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
+  name: "HelloWorld",
+  data() {
+    return {
+      activeTarget: {},
+      targets: [
+        {
+          name: "Mark",
+          health: 100,
+          attacks: {
+            slap: 1,
+            punch: 5,
+            kick: 10
+          }
+        },
+        {
+          name: "Jake",
+          health: 100,
+          attacks: {
+            code: 0,
+            punch: 6,
+            dropKick: 9
+          }
+        },
+        {
+          name: "D$",
+          health: 100,
+          attacks: {
+            log: -5,
+            hug: 4,
+            typo: 1
+          }
+        }
+      ]
+    };
+  },
+  methods: {
+    attack(attackType) {
+      this.activeTarget.health -= this.activeTarget.attacks[attackType];
+      if (this.activeTarget.health < 0) {
+        this.activeTarget.health = 0;
+      }
+    }
   }
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
+.alive {
+  color: green;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
+.bloodied {
+  color: yellow;
 }
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
+.dead {
+  color: red;
 }
 </style>
